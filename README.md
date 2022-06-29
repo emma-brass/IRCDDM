@@ -1,4 +1,6 @@
 # IRCDDM
+
+OVERVIEW:
 Intrinsic Reaction Coordinate Difference Density Matrices - takes the geometries present in the .fchk file of an IRC calculation and generates individual .gjf files from these. These files are then submitted, and initial .cub files are generated. Following these .cub file generations, the optimal parameters (axis lengths, step sizes, and cube origin) are calculated, and new .cub files are generated for each geometry. This allows for the tracking of electron movement (density) throughout a transition state. 
 
 1fchk.py script grabs the geometries present in the .fchk file and generates individual .gjf files. These are created with routeline #p sp test to prevent the creation of the fort.7 file. This calculates the single-point energy for each molecule. Optimizations cannot be performed on these, as this would cause initial and final molecules to "fall back" to the reactant and product geometries
