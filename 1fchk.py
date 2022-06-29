@@ -57,6 +57,21 @@ def grepRxCoord(filename,phrase):
 				return rxstart,rxend
 			else:
 				pass
+
+def chrgmult(filename):
+	multiplicity=[]
+	charge=[]
+	with open(filename) as f:
+		for line in f: 
+			if "Multiplicity" in line: 
+				mult=line.split()
+				multiplicity=mult[-1]
+				multiplicity=int(multiplicity)
+			if "Charge " in line: 
+				chrg=line.split()
+				charge=chrg[-1]
+	return multiplicity, charge
+
 def RxCoordfchk(filename):
 	rxstart,rxend=grepRxCoord(filename,phrase='Results for each geome')
 	with open(filename,'r') as f:
@@ -93,7 +108,7 @@ def newfile():
 		chk+=newfname+str(count)+'.chk'
 		current+=newfname+str(count)+'.gjf'
 		with open(current, 'w') as nf:
-			nf.write('%chk={} \n#p sp test \n\n{}{} \n\n0 1 \n {} \n\n'.format(chk,newfname,count,item))
+			nf.write('%chk={} \n#p sp test \n\n{}{} \n\n{} {} \n {} \n\n'.format(chk,newfname,count,multiplicity,charge,item))
 		nf.close()
 		count+=1
 	return nf
@@ -164,6 +179,7 @@ with open(filename,'r') as f:
 			x=line.strip().split()
 			step=int(x[-1])//2
 			print "Number of steps:", step
+charge,multiplicity=chrgmult(filename)
 num=NAtoms(filename)
 slist=findline(filename)
 new=fchk()
