@@ -1,0 +1,2 @@
+# IRCDDM
+Intrinsic Reaction Coordinate Difference Density Matrices - takes the geometries present in the .fchk file of an IRC calculation and generates individual .gjf files from these. These files are then submitted, and initial .cub files are generated. Following these .cub file generations, the optimal parameters (axis lengths, step sizes, and cube origin) are calculated, and new .cub files are generated for each geometry. This allows for the tracking of electron movement (density) throughout a transition state. 
