@@ -13,7 +13,7 @@ NOTE: In this step of the script, it is NECESSARY that any files not of interest
 4chcub.sh generates the new .cub files with the updated parameters. The cubegen input line is as follows: cubegen 1 density=scf file.fchk newcubfile.cub -1 h TEMP.cub
 This reads the parameters copied into the TEMP.cub file as the parameters for each of the geometries.
 
-IRCDDM.sh calls the previously mentioned scripts. This is created for simplicity so that only one script needs to be called by the user. 
+IRCDDM.sh calls the previously mentioned scripts. This is created for simplicity so that only one script needs to be called by the user. Additionally, this allows the user to use components of the code as needed, without calling the entire script. 
 
 CURRENT WORK: 
 5subcub.sh will generate subtracted .cub files between the ith and i+1th geometries in the IRC path. First, however, it is necessary to confirm the order of points in the IRC (i.e. file1 corresponds to reactant, and the last numbered file corresponds to the product). 
