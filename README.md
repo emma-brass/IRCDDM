@@ -20,6 +20,7 @@ CURRENT WORK:
 This will use the cubman Gaussian utility with input line as follows: cubman Su file1.cub y file2.cub y output.cub y
 
 ADDED 7/8/22
+
 5subcub.sh generates subtracted .cub files using the Gaussian cubman utility for the nth and nth+1 steps in an IRC path. These are generated from reactant to product, with files being named consecutively in this order. Output subtracted files have name format sub$original_name$step.cub. 
 Note - while this section of the code provides extensive visualization for the changes over the reaction coordinate, the comparison of individual (i.e. non-consecutive) points of interest is still possible via manual input. 
 
