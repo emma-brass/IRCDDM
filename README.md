@@ -15,14 +15,18 @@ This reads the parameters copied into the TEMP.cub file as the parameters for ea
 
 IRCDDM.sh calls the previously mentioned scripts. This is created for simplicity so that only one script needs to be called by the user. Additionally, this allows the user to use components of the code as needed, without calling the entire script. 
 
-CURRENT WORK: 
+FUTURE WORK: 
+
 5subcub.sh will generate subtracted .cub files between the ith and i+1th geometries in the IRC path. First, however, it is necessary to confirm the order of points in the IRC (i.e. file1 corresponds to reactant, and the last numbered file corresponds to the product). 
 This will use the cubman Gaussian utility with input line as follows: cubman Su file1.cub y file2.cub y output.cub y
 
-ADDED 7/8/22
+Analysis of changing difference density natural orbitals (DDNOs) is being developed using the existent NBO7 program, which will allow for better understanding of the orbitals of interest in a given IRC pathway. 
+
+ADDED 7/8/22:
 
 5subcub.sh generates subtracted .cub files using the Gaussian cubman utility for the nth and nth+1 steps in an IRC path. These are generated from reactant to product, with files being named consecutively in this order. Output subtracted files have name format sub$original_name$step.cub. 
-Note - while this section of the code provides extensive visualization for the changes over the reaction coordinate, the comparison of individual (i.e. non-consecutive) points of interest is still possible via manual input. 
+Note - while this section of the code provides extensive visualization for the changes over the reaction coordinate, the comparison of individual (i.e. non-consecutive) points of interest is still possible via manual operation of the Gaussian cubman utility.
+
 
 
 
