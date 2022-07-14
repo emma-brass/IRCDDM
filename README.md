@@ -3,7 +3,7 @@
 OVERVIEW:
 Intrinsic Reaction Coordinate Difference Density Matrices - takes the geometries present in the .fchk file of an IRC calculation and generates individual .gjf files from these. These files are then submitted, and initial .cub files are generated. Following these .cub file generations, the optimal parameters (axis lengths, step sizes, and cube origin) are calculated, and new .cub files are generated for each geometry. This allows for the tracking of electron movement (density) throughout a transition state. 
 
-1fchk.py script grabs the geometries present in the .fchk file and generates individual .gjf files. These are created with routeline #p sp test to prevent the creation of the fort.7 file. This calculates the single-point energy for each molecule. Optimizations cannot be performed on these, as this would cause initial and final molecules to "fall back" to the reactant and product geometries
+1fchk.py script grabs the geometries present in the .fchk file and generates individual .gjf files. These are created with routeline #p sp test to prevent the creation of the fort.7 file. This calculates the single-point energy for each molecule. Optimizations cannot be performed on these, as this would cause initial and final molecules to "fall back" to the reactant and product geometries. Nosymm keyword is used to prevent unnecessary rotations. 
 
 2pybash.sh first searches for any unsubmitted files in the current working directory. If present, it submits these files, formats the checkpoint files, and generates the inital unoptimized .cub files. npts is set to -2 (coarse), with 3 points/Bohr. One of these generated .cub files is then copied to a TEMP.cub file for later overwriting and reading of parameters in later steps. 
 NOTE: In this step of the script, it is NECESSARY that any files not of interest in the current calculations have corresponding .log files. Additionally, there should be no existing .cub files present in the directory. 
@@ -17,16 +17,11 @@ IRCDDM.sh calls the previously mentioned scripts. This is created for simplicity
 
 FUTURE WORK: 
 
-5subcub.sh will generate subtracted .cub files between the ith and i+1th geometries in the IRC path. First, however, it is necessary to confirm the order of points in the IRC (i.e. file1 corresponds to reactant, and the last numbered file corresponds to the product - see 7/11/22 update)
+5subcub.sh will generate subtracted .cub files between the ith and i+1th geometries in the IRC path. First, however, it is necessary to confirm the order of points in the IRC (update 7/14/22 - files now renamed in order of IRC point)
 
 Adding an option that allows for analysis of single-sided IRC paths (i.e. forward or reverse)
 
-Analysis of changing difference density natural orbitals (DDNOs) is being developed using the existent NBO7 program, which will allow for better understanding of the orbitals of interest in a given IRC pathway. 
-
-ADDED 7/8/22:
-
-5subcub.sh generates subtracted .cub files using the Gaussian cubman utility for the nth and nth+1 steps in an IRC path. These are generated from reactant to product, with files being named consecutively in this order. Output subtracted files have name format sub$original_name$step.cub. 
-Note - while this section of the code provides extensive visualization for the changes over the reaction coordinate, the comparison of individual (i.e. non-consecutive) points of interest is still possible via manual operation of the Gaussian cubman utility.
+Analysis of changing difference density natural orbitals (DDNOs) is being developed using the existent NBO7 program, which will allow for better understanding of the orbitals of interest in a given IRC pathway.
 
 ADDED 7/11/22:
 
