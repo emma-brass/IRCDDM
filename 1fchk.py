@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import sys
+import math
 import numpy as np
 import os
 import subprocess
@@ -26,6 +27,7 @@ def NAtoms(filename):
 					num=int(blank)
         print"Number of atoms:",num
 	return num
+
 def findline(filename):
 	with open(filename) as f:
 		slist=[]
@@ -47,35 +49,26 @@ def finalprint(filename):
 					element+=1
 	[sublist.append('\n') for sublist in cart]
 	return cart
+
 def grepRxCoord(filename,phrase):
 	with open(filename) as f:
 		lines=f.readlines()
 		for i, line in enumerate(lines):
 			if phrase in line:
 				rxstart=i+1
-				rxend=rxstart+2*int(step)//5
+				if step%5==0: 	
+					rxend=rxstart+(2*int(step)/5)
+				else: 
+					rxend=rxstart+(2*int(step)/5)+1
+
 				return rxstart,rxend
 			else:
 				pass
-
-def chrgmult(filename):
-	multiplicity=[]
-	charge=[]
-	with open(filename) as f:
-		for line in f: 
-			if "Multiplicity" in line: 
-				mult=line.split()
-				multiplicity=mult[-1]
-				multiplicity=int(multiplicity)
-			if "Charge " in line: 
-				chrg=line.split()
-				charge=chrg[-1]
-	return multiplicity, charge
-
 def RxCoordfchk(filename):
 	rxstart,rxend=grepRxCoord(filename,phrase='Results for each geome')
 	with open(filename,'r') as f:
 		lines=[]
+		RxCoord=[]
 		for i, line in enumerate(f):
 			if i<rxstart:
 				pass
@@ -88,19 +81,16 @@ def RxCoordfchk(filename):
 				break
 	RxCoord=[item for sublist in RxCoord for item in sublist]
 	RxCoord=[RxCoord[i:i+2] for i in range(0, len(RxCoord), 2)]
-	if step//2==step/2:
-		TS=int(step//2)
-	else:
-		TS=int(round((step+1)//2))
-	forward=RxCoord[0:TS+2]	
-	backward=RxCoord[TS+2:step]
-	backward.reverse()
-	RxCoord=backward+forward
+	RxFwd=RxCoord[0:forward]
+	RxRev=RxCoord[forward:step]
+	RxRev.reverse()
+	RxCoord=RxRev+RxFwd
 	if RxCoord[0][0]>RxCoord[-1][0]:
 		print "Reaction is exothermic. TS is approximated to be reactant-like in nature."
 	else:
 		print "Reaction is endothermic. TS is approximated to be product-like in nature."
 	return RxCoord
+
 def newfile():
 	for count,item in enumerate(new,1):
 		chk=''
@@ -108,7 +98,7 @@ def newfile():
 		chk+=newfname+str(count)+'.chk'
 		current+=newfname+str(count)+'.gjf'
 		with open(current, 'w') as nf:
-			nf.write('%chk={} \n#p sp test \n\n{}{} \n\n{} {} \n {} \n\n'.format(chk,newfname,count,multiplicity,charge,item))
+			nf.write('%chk={} \n#p sp nosymm test \n\n{}{} \n\n0 1 \n {} \n\n'.format(chk,newfname,count,item))
 		nf.close()
 		count+=1
 	return nf
@@ -134,6 +124,30 @@ def symgrab(filename):
 			while atom[i]==s:
 				atom[i]=symlist[s-1]
 	return atom
+
+def nobal(logfile):
+	lst=[]
+	steps=[]
+	path=[]
+	with open(logfile, 'r') as f:
+		for line in f:
+			if "Point Number:" in line: 
+				lst=line.split()
+				path.append(lst)
+	for i in range(len(path)):
+		mx=int(path[i][2])
+	if mx!=path[-1][2]:
+		print "forward direction maxpoints", step-mx
+		forward=step-mx
+		print "reverse direction maxpoints", mx
+		reverse=mx
+	else:
+		print "forward direction maxpoints", mx
+		forward=mx
+		print "reverse direction maxpoints", step-mx
+		reverse=step-mx
+	return forward,reverse
+
 def fchk():
 	with open(filename, 'r') as f:
 		lines=f.readlines()
@@ -172,6 +186,7 @@ def fchk():
 	return new
 rawfile=raw_input('.fchk file name, excluding file extension: ')
 filename=os.path.join(dr,rawfile+'.fchk')
+logfile=os.path.join(dr,rawfile+'.log')
 with open(filename,'r') as f:
 	lines=f.readlines()	
 	for line in lines:
@@ -179,10 +194,39 @@ with open(filename,'r') as f:
 			x=line.strip().split()
 			step=int(x[-1])//2
 			print "Number of steps:", step
-charge,multiplicity=chrgmult(filename)
+print "Collecting geometries from .fchk file"
+
+forward,reverse=nobal(logfile)
+TS=reverse+1
 num=NAtoms(filename)
 slist=findline(filename)
 new=fchk()
 RxCoord=RxCoordfchk(filename)
 newfname=raw_input("Name of output file, excluding file extension: \n")
 nf=newfile()
+filelist=[]
+for i in range(1,step+1):
+	file=newfname+str(i)+'.gjf'
+	filelist.append(file)
+path1=filelist[0:forward]
+path2=filelist[forward:step]
+path2=path2[::-1]
+chk=[]
+for i,part in enumerate(path2):
+	newname=str(i+1)+newfname
+	os.rename(part,newname+'.gjf')			
+	chk.append(newname)
+for i,part in enumerate(path1):
+	fstep=i+1+reverse
+	newname=str(fstep)+newfname
+	os.rename(part,newname+'.gjf')
+	chk.append(newname)	
+
+for i in chk:
+	with open(i+".gjf",'r') as f:
+		lines=f.readlines()
+	lines[0]="%chk={}.chk\n".format(i)
+	lines[3]=newfname+' step number '+i+' -- IRCDDM Program\n'	
+	with open(i+".gjf",'w') as f:
+		f.writelines(lines)
+
