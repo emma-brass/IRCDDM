@@ -1,68 +1,32 @@
 #!/bin/bash
 module load gaussian/gdv
 
+cd optimized_cubes
+
 for i in $(ls -v1 new*.cub); do
-	declare -i num=$(ls new*.cub | wc -l)
+	declare -i num=$(ls new*.cub | wc -l)    ###sets num variable to total number of new*.cub files
 	file=$(basename $i .cub)
-	ffiles+=("$i ")
+	xfiles+=("$i ")
 done
 
-for i in $(ls -1vr new*.cub); do
-	rfiles+=("$i ")
-done
+file=$(printf '%s' "$file" | sed 's/[0-9]*//g') ###removes step number from file name
+rawname=${file:3}    ### gets user-inputted raw file name (no extension/numbers)
+echo ${xfiles[@]}
 
-file=$(printf '%s' "$file" | sed 's/[0-9]*//g')
-rawname=${file:3}
-prod=$((num/2))
-befTS=$((num/2+1))
-TS=1
-num=$((num-1))
-TSf=$file$TS.cub
-reactf=$file$num.cub
-prodf=$file$prod.cub
-befTSf=$file$befTS.cub
-
-echo $befTSf $prodf $reactf $TSf
-
-slice2+=(${rfiles[@]:0:$befTS})
-for i in ${!slice2[@]}; do 
-	index=$((i+1))
+for i in ${!xfiles[@]}; do
+	index=$((i+1))		
 	cubman <<-ADDTEXT
 		Su
-		${slice2[$i]}
+		${xfiles[$i]}
 		y
-		${slice2[$index]}
+		${xfiles[$index]}
 		y
 		sub$rawname$i.cub
 		y
 	ADDTEXT
 done
+mkdir sub_cubes
 
-slice1+=(${ffiles[@]:0:$prod})
-for i in ${!slice1[@]}; do
-	index=$((i+1))
-	step=$((i+prod))
-	cubman <<-ADDTEXT
-		SU	
-		${slice1[$i]}
-		y
-		${slice1[$index]}
-		y
-		sub$rawname$step.cub
-		y
-	ADDTEXT
+for i in $(ls sub*.cub); do
+	mv $i sub_cubes
 done
-
-cubman <<ADDTEXT
-SU
-$befTSf
-y
-$TSf
-y
-sub$rawname$befTS.cub
-y	
-ADDTEXT
-
-echo -e "\n All subtracted cube files have been generated. Labels correspond to the point along the IRC path. \n"
-
-
