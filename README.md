@@ -5,7 +5,7 @@ Intrinsic Reaction Coordinate Difference Density Matrices - takes the geometries
 
 ## Using the Code
 ```
-bash IRCDDM.sh 
+./IRCDDM.sh 
 -> IRC_filename (no extension)
 ```
 
