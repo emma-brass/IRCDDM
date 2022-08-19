@@ -23,15 +23,17 @@ generates subtracted .cub files between geometries in the IRC path. This include
 ### IRCDDM.sh
 calls the previously mentioned scripts.
 
-##Use of Code
--> bash IRCDDM.sh 
+## Use of Code
+```
+bash IRCDDM.sh 
 -> IRC_filename (no extension)
+```
 
 ## Future Work
 Adding an option that allows for analysis of single-sided IRC paths (i.e. forward or reverse)
 Analysis of changing difference density natural orbitals (DDNOs) is being developed using the existent NBO7 program, which will allow for better understanding of the orbitals of interest in a given IRC pathway.
 
-UPDATES
+## Updates
 7/11/22: Program now allows for analysis of IRCs having different number of forward/reverse steps. 
 7/14/22: Initial files now renamed in order or IRC point. 
 
