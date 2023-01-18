@@ -35,6 +35,7 @@ Analysis of changing difference density natural orbitals (DDNOs) is being develo
 
 ## Updates
 7/11/22: Program now allows for analysis of IRCs having different number of forward/reverse steps. 
-\n7/14/22: Initial files now renamed in order of IRC point. 
+
+7/14/22: Initial files now renamed in order of IRC point. 
 
 
